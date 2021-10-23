@@ -1,0 +1,54 @@
+---
+title: "Live coding"
+author: "bia"
+date: "10/22/2021"
+output: html_document
+bibliography: references.bib
+csl: OUTRO-abnt.csl
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = FALSE,
+	message = FALSE,
+	warning = FALSE
+)
+```
+
+```{css}
+p{
+  text-align: justify;
+}
+h1,h2,h3,h4,h5{
+  text-align: center; 
+  color: #a500ff;
+}
+```
+
+```{r, out.width="100%", fig.align='center', fig.cap="Legenda: Logo da AI Inclusive"}
+knitr::include_graphics("https://d1fdloi71mui9q.cloudfront.net/M4F59krMTBiPr8GELV1f_v9JFfhCxv70mJJIe")
+```
+
+```{r}
+library(dplyr)
+starwars_select <- starwars %>% 
+  select(name:mass) 
+
+
+
+knitr::kable(head(starwars_select))
+
+DT::datatable(starwars_select)
+```
+
+Função para gerar PDF: `pagedown::chrome_print("exemplo1.Rmd")`
+
+Olá meu nome é **bia** , e o [meu blog](https://beatrizmilz.com/talk/) tem apresentacoes.
+
+Eu gosto do artigo do hadley que fala tal coisa [@wickham2014]
+
+@wickham2014
+
+Arquivos .csl: <https://github.com/citation-style-language/styles>
+
+## Referências

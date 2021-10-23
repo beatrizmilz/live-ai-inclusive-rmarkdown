@@ -1,0 +1,50 @@
+---
+title: "Relatório com código em Python :)"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::knit_engines$set(python = reticulate::eng_python)
+# reticulate::py_install("pandas")
+# reticulate::py_install("seaborn")
+library(reticulate)
+```
+
+## Verificando congifs do Python
+
+```{r}
+reticulate::py_config()
+```
+
+
+
+## Importar dados
+
+```{python}
+import pandas as pd
+lucro_pixar = pd.read_csv('dados/lucro_pixar.csv', sep = ';')
+lucro_pixar.info()
+```
+
+
+
+
+## Criar um gráfico com ggplot
+
+```{r graficoR, message=FALSE, out.width="100%"}
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+
+
+py$lucro_pixar %>%
+  tidyr::drop_na(lucro) %>% 
+  mutate(filme = forcats::fct_reorder(filme, lucro)) %>%
+  ggplot() +
+  geom_col(aes(x = lucro, y = filme, fill = lucro), show.legend = FALSE) +
+  scale_x_continuous(labels = scales::dollar_format()) +
+  scale_fill_viridis_c() +
+  theme_light() + 
+  labs(x = "Lucro", y = "Filmes")
+```

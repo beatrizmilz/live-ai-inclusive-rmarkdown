@@ -1,0 +1,72 @@
+---
+title: "Exemplo de relatório"
+output: html_document
+encoding: "UTF-8"
+params:
+  ano: 2021
+  mes: 10
+  sistema: Rio Grande
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, fig.align = "center", fig.path = "")
+```
+
+
+```{r eval=FALSE, include=TRUE}
+# install.packages("devtools")
+# devtools::install_github("beatrizmilz/mananciais")
+```
+
+```{r}
+library(mananciais)
+library(ggplot2)
+library(dplyr)
+```
+
+**Relatório gerado em**: `r format(Sys.Date(), format='%d de %B de %Y')`
+
+**Sistema**: `r params$sistema`
+
+**Período**: `r params$mes`/`r params$ano`
+
+```{r}
+dados <- mananciais %>%
+  mutate(ano = lubridate::year(data),
+         mes = lubridate::month(data)) %>%
+  filter(sistema == params$sistema,
+         ano == params$ano,
+         mes == params$mes)
+```
+
+
+```{r}
+menor_volume <- dados %>% arrange(volume_porcentagem) %>% slice(1)
+
+menor_volume_data <- format(menor_volume %>%  pull(data), format='%d/%m/%Y')
+
+menor_volume_porcentagem <- menor_volume %>% pull(volume_porcentagem)
+```
+
+O dia com o menor volume armazenado foi `r menor_volume_data`, com `r menor_volume_porcentagem` %.
+
+## Gráfico
+
+```{r volume}
+dados %>%
+  ggplot() +
+  geom_line(aes(x = data, y = volume_porcentagem)) +
+  theme_bw() +
+  labs(x = "Data", y = "Volume armazenado (%)")
+```
+
+```{r precip}
+dados %>%
+  ggplot() +
+  geom_line(aes(x = data, y = pluviometria_mensal), color = "blue", show.legend = TRUE) +
+  geom_hline(aes(yintercept = pluviometria_hist),
+             color = "red",
+             linetype = "dashed", show.legend = TRUE) +
+  theme_bw() +
+  labs(x = "Data", y = "Pluviometria (mm)", caption = "Reta azul: Pluviometria mensal acumulada (mm) \n Reta vermelha: Pluviometria histórica mensal (mm)")
+```
